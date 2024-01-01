@@ -4,14 +4,17 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
 	<body>
+	<form>
 		<img src="assets/Task.png"> <br>
 		<label for="card">Введите номер карты:</label>
-		<input id="card" name="card" minlength="15", maxlength="16">
+		<input id="card" name="card", minlength = "15", maxlength="16", pattern="\d{15,16}">
 		<br>
 		<label for="quantity">Введите требуемый заработок:</label>
 		<input id="income" name="income"> Рублей<br>
-		<input id="clickMe" type="button" value="Заработать!" onclick="doFunction();" />
-
+		
+	</form>
+	<input id="clickMe" type="button" value="Заработать!" onclick="checkdata();" />
+	<p id = "invalid"></p>
+	<script src="assets/js/main.js"></script>
 	</body>
-
 </html>

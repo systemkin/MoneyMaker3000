@@ -2,3 +2,9 @@ img{
     width: 90vw;
     max-width: 700px;
 }
+input:invalid {
+    border: 2px solid coral;
+  }
+  input:valid {
+    border: 2px solid black;
+  }
