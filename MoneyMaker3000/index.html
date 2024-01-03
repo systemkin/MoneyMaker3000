@@ -9,7 +9,14 @@
 				<span>Простой сайт-программа</span>
 			</div>
 		</div>
-		<img src="assets/Task.png">  <br>
+		<div class = "imageDataWrapper">
+			<img src="assets/Task.png">
+			<div class = RowWrapper>
+			<input class = "butter" id="clickMe2" type="button" value="Проверить заработок" onclick="income()" width = 40px>
+			<p id = "income"></p>
+			</div>
+		</div>
+		
 		<div class = mainWrapper>
 			<div class = "labelInputWrapper">
 				<label for="card">Введите номер карты:</label>
@@ -17,7 +24,7 @@
 			</div>
 			<div class = "labelInputWrapper">
 				<label for="quantity">Введите требуемый заработок:</label>
-				<input id="income" name="income">₽<br>
+				<input id="wantedIncome" name="wantedIncome", pattern="\d{1,}">₽<br>
 			</div>
 			<input class = "butter" id="clickMe" type="button" value="Заработать!" onclick="checkdata()" width = 40px >
 		</div>
