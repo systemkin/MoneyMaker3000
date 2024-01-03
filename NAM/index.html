@@ -332,64 +332,65 @@ function loop() {
 }
 
 
-function generate_share(){
-  var elements = $(".command");
-
-  var text_data = ""
-
-  for (var i = 0; i<elements.length; i++){
-    var inputs = elements.eq(i).find("input")
-    var sign = elements.eq(i).find("option:selected")
-
-    text_data+= inputs[0].value + ".#." + sign[0].value + ".#." + inputs[1].value
-    
-    if (i+1 < elements.length){
-      text_data+=".%."
-    }
-
-  }
-  
-  try{
-    var encodedData = window.btoa(text_data); // encode a string
-    if (text_data != ""){
-      window.history.replaceState("", "", "/share/"+encodedData);
-
-      if (confirm("😎 Your link is ready. Now you can share with others!\n\nWould you like to copy the link?", "stuff")){
-        const el = document.createElement('textarea');
-        el.value = window.location.href;
-        el.setAttribute('readonly', '');
-        el.style.position = 'absolute';
-        el.style.left = '-9999px';
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
+      function generate_share() {
+        const rulesOrder = [...document.querySelectorAll("#commandList > .command")].map(item=>item.dataset.index);
+        const res = [];
+        for (let i of rulesOrder) {
+          const rule = rules[i];
+          res.push([
+            encodeURIComponent(rule[0]),
+            rule[1],
+            encodeURIComponent(rule[2]),
+          ]);
+        }
+        const link =
+          window.location.origin +
+          window.location.pathname +
+          "?q=" +
+          btoa(JSON.stringify(res));
+        window.history.pushState(
+          res,
+          "save",
+          `?q=${encodeURIComponent(
+            btoa(JSON.stringify(res))
+          )}&s=${encodeURIComponent(
+            document.querySelector("#original_text").value
+          )}`
+        );
+        fetch(`https://tinyurl.com/api-create.php?url=${window.location.href}`)
+          .then((res) => res.text())
+          .then((url) => prompt("Полученная ссылка: ", url));
       }
-    
-  }
-  }catch(e){
-    alert("😥 К сожалению, в данный момент можно использовать символы Латиницы.")
-  }
 
-}
+      function restoreData() {
+        const url = new URL(window.location.href);
+        let query = url.searchParams.get("q");
+        let s = url.searchParams.get("s") || "";
 
+        if (!query) return add_data_line();
 
+        try {
+          let data = JSON.parse(atob(query));
+          data.forEach((row) => {
+            if (row.length !== 3 || (row[1] !== "0" && row[1] !== "1"))
+              throw new Error("invalid link");
+          });
+          data.forEach((row) => {
+            add_data_line(
+              decodeURIComponent(row[0]),
+              decodeURIComponent(row[1]),
+              decodeURIComponent(row[2])
+            );
+          });
+          document.querySelector("#original_text").value = s;
+        } catch (e) {
+          console.error(e);
+          alert("Invalid link...");
+          return add_data_line();
+        }
+      }
 
-// load info
-var page_info = "{{ info }}";
-
-try {
-   var decodedData = atob(window.location.href.substring(38));
-   var lines = decodedData.split(".%.");
-   for (line in lines){
-     var data_in_line = lines[line].split(".#.")
-     add_data_line(data_in_line[0], data_in_line[1], data_in_line[2])
-   }
-   document.getElementById("input-area").scrollIntoView({block: "center", behavior: "smooth"});
-
-}catch (e) {
-   console.log(e)
-}
+      restoreData(); 
 
 
 </script>
