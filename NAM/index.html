@@ -379,7 +379,7 @@ function generate_share(){
 var page_info = "{{ info }}";
 
 try {
-   var decodedData = window.atob(page_info);
+   var decodedData = atob(window.location.href.substring(38));
    var lines = decodedData.split(".%.");
    for (line in lines){
      var data_in_line = lines[line].split(".#.")
