@@ -11,14 +11,14 @@ app = Flask(  # Create a flask app
 @app.route('/share/<saved_data>')
 def home(saved_data):
   if saved_data:
-    return render_template('markov.html', info = str(saved_data))
+    return render_template('index.html', info = str(saved_data))
   else:
-    return render_template('markov.html', info = "")
+    return render_template('index.html', info = "")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('markov.html', info = "")
+    return render_template('index.html', info = "")
 
 
 
