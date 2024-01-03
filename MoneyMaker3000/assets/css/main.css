@@ -83,6 +83,23 @@ input{
 }
 body{
   background: linear-gradient(-45deg,#ffffff,#ff9dc3,#afeaff,#9affe7);
-  background-size: 1000%;
-  animation: gradient 40s;
+  background-size: 400%;
+  animation: gradient 10s ease infinite;
+  -webkit-animation: gradient 20s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 25%;
+	}
+	50% {
+		background-position: 50% 25%;
+	}
+	100% {
+		background-position: 0% 25%;
+	}
+}
+
+p{
+  padding: 10px;
 }
