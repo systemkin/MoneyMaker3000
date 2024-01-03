@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Markov Algorithm</title>
+
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js"></script>
+  <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
+
+  <!-- Latest Sortable -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  
+  <style>
+
+.glyphicon-move {
+  cursor: move;
+  cursor: -webkit-grabbing;
+}
+  </style>
+
+</head>
+<body>
+
+  <div class="container mb-5 pt-5">
+    <input type="text" class="form-control overflow-auto text-center my-1" readonly id="showcase">
+    <div class="input-group mb-3 shadow" id="input-area">
+      <div class="input-group-prepend">
+        <a class="btn btn-danger" onclick="clearField()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+        </a>
+        
+      </div>
+      <input type="text" class="form-control overflow-auto text-center" id="original_text" autocomplete="off">
+    </div>
+
+    <div class="my-2 mb-3 card shadow">
+      <div class="d-flex justify-content-center pb-2 card-body">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="blue" class="bi bi-arrow-counterclockwise shadow rounded-circle mx-2" viewBox="-4 -5 24 24" onclick="if(confirm('🤔 Очистить и перезагрузить страницу?')){window.history.pushState('','','/'); document.location.reload();}">
+
+      <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+      <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+    </svg>
+
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi bi-caret-left shadow rounded-circle mx-2 d-none" id="btn-next-left" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M10.229 5.055a.5.5 0 0 0-.52.038L7 7.028V5.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0V8.972l2.71 1.935a.5.5 0 0 0 .79-.407v-5a.5.5 0 0 0-.271-.445z"/>
+      </svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="grey" class="bi bi-stop-circle shadow rounded-circle mx-2" id = "btn-stop" onclick="setTimeout(stopPressed, 90)" viewBox="0 0 16 16">
+        <!-- <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/> -->
+        <path d="M5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3z"/>
+      </svg>
+
+
+        <svg xmlns="http://www.w3.org/2000/svg" id = "btn-pause" width="40px" height="40px" fill="currentColor" class="bi bi-pause-circle shadow rounded-circle mx-2 d-none" onclick="setTimeout(pausePressed, 50)" viewBox="0 0 16 16">
+        <!-- <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/> -->
+        <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
+
+        </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="green" class="bi bi-play-circle shadow rounded-circle mx-2" id="btn-play" viewBox="0 0 16 16" onclick="setTimeout(playPressed, 90)">
+      <!-- <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/> -->
+      <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+    </svg>
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi bi-caret-right shadow rounded-circle mx-2 d-none" id="btn-next-right" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M6.271 5.055a.5.5 0 0 1 .52.038L9.5 7.028V5.5a.5.5 0 0 1 1 0v5a.5.5 0 0 1-1 0V8.972l-2.71 1.935A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+      </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="orange" class="bi bi-share shadow rounded-circle mx-2" viewBox="-6 -7 30 30" onclick="generate_share()">
+        <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+      </svg>
+
+      </div>
+      <div class="d-flex justify-content-center">
+        <input id="speed-limit" type="range" class="form-control-range slider mx-2"  type="range" min="5" max="500" step="5" value = "250">
+
+        <h6 id="speed-limit-text" class="mx-2" style="width: 30px;">50</h6>
+      </div>
+      
+    </div>
+  
+  <!-- Simple List -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+
+        <button id="add_line" class="add_line btn form-control btn-positive" onclick="add_data_line()">Add condition</button>
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="green" class="add_line bi bi-plus-circle position-fixed fixed-bottom ml-auto mx-2 my-2" viewBox="0 0 16 16" onclick="add_data_line()">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+        </svg>
+
+
+        
+
+        <div id="commandList" class="row my-2 row-cols-1 gap-2">
+              
+              <div class="col p-2 d-none" id="dataLine">
+                
+                <div class="input-group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-grip-vertical glyphicon-move align-self-center" viewBox="0 0 16 16">
+                  <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                  <input type="text" class="form-control text-center command-belong" oninput="validate_input(this)">
+                  <div class="input-group-prepend">
+                    <select class="form-select command-belong">
+                    <option selected value="0">➜</option>
+                    <option value="1" class="text-danger ">▪️➜</option>
+                  </select>
+
+                  </div>
+                  <input type="text" class="form-control text-center command-belong" oninput="validate_input(this)">
+
+                </div>
+              </div>
+
+          </div>
+
+        </div>
+      </div>
+
+
+  </div>
+
+
+<h6 class="m-0 text-center" onclick="">Fork from fork by cloud9store from Gleb Tambovtsev(quanuhs)</h6>
+
+<div class="text-center text-muted">
+<p>inspired by Pavel Plotnikov</p>
+<p class="m-0">The Bonch-Bruevich St. Petersburg State University of Telecommunications</p>
+
+</div>
+
+</body>
+
+<script>
+
+
+$('#commandList').scroll(function() { 
+    $('#add_line').css('top', $(this).scrollTop());
+});
+
+var play = false;
+var current = {"line_index": 0, "inside_index": 0, "pointer_index": 0};
+var speed_limits = {"max": 500, "step": 5, "min": 5}
+
+var loop_delay = speed_limits.max/2;
+
+
+var speed_elem = $("#speed-limit");
+
+speed_elem[0].addEventListener("change", function(){
+  $("#speed-limit-text")[0].innerHTML = this.value/speed_limits.step;
+  loop_delay = speed_limits.max - this.value;
+});
+
+  // Simple list
+var data_space = Sortable.create(commandList, {
+  group: "items",
+  sort: true,
+  animation: 150,
+  handle: '.glyphicon-move',
+  swapThreshold: 1,
+  removeOnSpill: true,
+
+  onStart: function (evt) {
+		evt.item.classList.add("bg-secondary");
+	},
+
+  onEnd: function (evt) {
+		evt.item.classList.remove("bg-secondary");
+	}
+
+
+
+});
+
+
+function validate_input(inp){
+  if (inp.value.slice(-1) == "."){
+    inp.value = inp.value.slice(0, -1)
+  }
+}
+
+function add_data_line(arr1 = "", opt="0", arr2=""){
+  cloner = $("#dataLine").clone().removeAttr('id').removeClass("d-none").addClass("command");
+  var inputs = cloner.find("input")
+  inputs[0].value = arr1;
+  inputs[1].value = arr2;
+  var options = cloner.find("option")
+  if (opt == '1'){
+    options[0].removeAttribute("selected")
+    options[1].setAttribute("selected", true)
+  }
+  
+
+  $("#commandList").append(cloner);
+  cloner[0].scrollIntoView({block: "center", behavior: "smooth"});
+}
+
+
+var paused = false;
+
+function pausePressed(){
+  $("#btn-pause").addClass("d-none")
+  $("#btn-play").removeClass("d-none")
+  play = false;
+  paused = true;
+
+}
+
+function stopPressed(forced = false){
+    play = false;
+    current.line_index = 0;
+    current.inside_index = 0;
+
+    $(".command").removeClass("border border-2 border-info shadow-lg")
+
+    $("#input-area").removeClass("d-none")
+    $(".add_line").removeClass("d-none")
+    data_space.options.disabled = false
+    $("#btn-pause").addClass("d-none")
+    $("#btn-play").removeClass("d-none")
+    $("#btn-stop").attr("fill", "grey")
+    $(".command-belong").removeAttr("disabled")
+
+    if (forced){
+      setTimeout(function() { alert("😸 complete!") }, 52);
+    }
+}
+
+function playPressed(){
+  data_space.options.disabled = true
+  
+  $("#input-area").addClass("d-none")
+  if (paused)
+    paused = false
+  else{
+    $("#showcase")[0].value = $("#original_text")[0].value
+  }
+  $(".add_line").addClass("d-none")
+  $("#btn-play").addClass("d-none")
+  $("#btn-pause").removeClass("d-none")
+  $("#btn-stop").attr("fill", "red")
+  $(".command-belong").attr("disabled", true)
+  play = true;
+  loop();
+}
+
+function loopStep() {
+  if (play){
+
+    $(".command").removeClass("border border-2 border-info shadow-lg")
+    var element = $(".command").eq(current.line_index)
+    element.addClass("border border-2 border-info shadow-lg")
+
+    var inputs = element.find("input")
+    var terminate = element.find("option:selected")
+
+    if (($("#showcase")[0].value.split(inputs[0].value).length - 1) || inputs[0].value == ""){
+      
+      if (inputs[0].value == ""){
+        $("#showcase")[0].value = inputs[1].value + $("#showcase")[0].value
+        
+      }else{
+          $("#showcase")[0].value = $("#showcase")[0].value.replace(inputs[0].value, inputs[1].value);
+      }
+
+      if(terminate[0].value == "1"){
+        stopPressed(true)
+        return false
+      }else{
+        current.line_index = 0;
+        current.inside_index += 1;
+      }
+    }else{
+      current.inside_index = 0;
+      current.line_index += 1;
+      if ((current.line_index) >=($(".command").length))
+          {stopPressed(true)}
+    }
+    
+  }else{
+    return false
+  }
+  return true
+}
+
+
+function clearField(){
+  $("#original_text")[0].value = "";
+}
+
+
+var current_delay = 0;
+
+function loop() {
+    if (!play){
+      
+      current_delay = 0;
+      return;
+    }
+
+
+    current_delay += 1;
+
+    if (current_delay >= loop_delay){
+      current_delay = 0;
+      loopStep()
+    }
+
+    setTimeout(function() { loop(); }, 0.5);
+      
+
+}
+
+
+function generate_share(){
+  var elements = $(".command");
+
+  var text_data = ""
+
+  for (var i = 0; i<elements.length; i++){
+    var inputs = elements.eq(i).find("input")
+    var sign = elements.eq(i).find("option:selected")
+
+    text_data+= inputs[0].value + ".#." + sign[0].value + ".#." + inputs[1].value
+    
+    if (i+1 < elements.length){
+      text_data+=".%."
+    }
+
+  }
+  
+  try{
+    var encodedData = window.btoa(text_data); // encode a string
+    if (text_data != ""){
+      window.history.replaceState("", "", '/share/'+encodedData);
+
+      if (confirm("😎 Your link is ready. Now you can share with others!\n\nWould you like to copy the link?", "stuff")){
+        const el = document.createElement('textarea');
+        el.value = window.location.href;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+    
+  }
+  }catch(e){
+    alert("😥 К сожалению, в данный момент можно использовать символы Латиницы.")
+  }
+
+}
+
+
+
+// load info
+var page_info = "{{ info }}";
+
+try {
+   var decodedData = window.atob(page_info);
+   var lines = decodedData.split(".%.");
+   for (line in lines){
+     var data_in_line = lines[line].split(".#.")
+     add_data_line(data_in_line[0], data_in_line[1], data_in_line[2])
+   }
+   document.getElementById("input-area").scrollIntoView({block: "center", behavior: "smooth"});
+
+}catch (e) {
+   console.log(e)
+}
+
+
+</script>
+
+<style>
+.bi:hover,
+.bi:focus {
+  fill: black;
+  color: black;
+}
+
+</style>
+
+</html>
