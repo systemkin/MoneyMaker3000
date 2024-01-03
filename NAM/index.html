@@ -352,7 +352,7 @@ function generate_share(){
   try{
     var encodedData = window.btoa(text_data); // encode a string
     if (text_data != ""){
-      window.history.replaceState("", "", "NAM/share/"+encodedData);
+      window.history.replaceState("", "", "/share/"+encodedData);
 
       if (confirm("😎 Your link is ready. Now you can share with others!\n\nWould you like to copy the link?", "stuff")){
         const el = document.createElement('textarea');
