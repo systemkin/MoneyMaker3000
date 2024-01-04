@@ -440,9 +440,9 @@
 
     }
 
-export { App };
-</script>
 
+</script>
+export { App };
 <template>
 
 
