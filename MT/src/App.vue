@@ -3,7 +3,7 @@
     import Rule from './components/Rule.vue'
     import CloseIcon from './components/icons/CloseIcon.vue'
     
-    import { ref, reactive, onMounted, computed, watch, defineProps, nextTick } from 'vue'
+    import { ref, reactive, onMounted, computed, watch, defineProps, nextTick } from 'https://unpkg.com/vue@3.4.4/dist/vue.esm-browser.js'
     
     class RuleClass {
         
