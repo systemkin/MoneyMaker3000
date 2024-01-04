@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     host: true
   },
+  base: '/MT/',
   plugins: [vue()],
   resolve: {
     alias: {
