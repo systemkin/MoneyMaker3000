@@ -1,0 +1,14 @@
+@import "./base.css";
+
+    body {
+        width: 92%;
+        height: 100%;
+        margin: auto;
+        padding-top: 2%;
+
+        /* background-color: transparent;
+        background-image: radial-gradient(rgb(207, 219, 213) 1px, transparent 1px), radial-gradient(rgb(207, 219, 213) 1px, rgb(36, 36, 35) 1px);
+        background-position: 0 0, 30px 30px;
+        background-size: 60px 60px;
+        border-radius: 0 */
+    }
