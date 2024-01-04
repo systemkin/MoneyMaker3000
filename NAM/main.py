@@ -2,7 +2,7 @@ from flask import *
 
 app = Flask(  # Create a flask app
   __name__,
-  template_folder='templates',  # Name of html file folder
+  template_folder='',  # Name of html file folder
   static_folder='static'  # Name of directory for static files
 )
 
@@ -11,14 +11,14 @@ app = Flask(  # Create a flask app
 @app.route('127.0.0.1:5500/share/<saved_data>')
 def home(saved_data):
   if saved_data:
-    return render_template('markov.html', info = str(saved_data))
+    return render_template('index.html', info = str(saved_data))
   else:
-    return render_template('markov.html', info = "")
+    return render_template('index.html', info = "")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('markov.html', info = "")
+    return render_template('index.html', info = "")
 
 
 
