@@ -440,7 +440,7 @@
 
     }
 
-    
+export { App };
 </script>
 
 <template>
